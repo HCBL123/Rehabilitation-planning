@@ -1,0 +1,22 @@
+{
+    "rules": {
+        "patients": {
+            "$uid": {
+                ".read": "$uid === auth.uid || root.child('doctors').child(auth.uid).exists()",
+                ".write": "$uid === auth.uid || root.child('doctors').child(auth.uid).exists()",
+                "exercises": {
+                    ".indexOn": ["nextSession"]
+                },
+                "exerciseHistory": {
+                    ".indexOn": ["date"]
+                }
+            }
+        },
+        "doctors": {
+            "$uid": {
+                ".read": "$uid === auth.uid",
+                ".write": "$uid === auth.uid"
+            }
+        }
+    }
+}

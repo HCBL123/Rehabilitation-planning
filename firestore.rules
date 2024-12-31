@@ -1,0 +1,24 @@
+// firestore.rules
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Helper function to check if user is a doctor
+    function isDoctor(userId) {
+      return isAuthenticated() && 
+             exists(/databases/$(database)/documents/doctors/$(request.auth.uid));
+    }
+
+    // Patient collection rules
+    match /patients/{patientId} {
+      // Allow doctors to read their patients
+      allow read: if isDoctor(request.auth.uid) && 
+                    resource.data.doctorId == request.auth.uid;
+      allow write: if isDoctor(request.auth.uid);
+    }
+  }
+}
